@@ -1,0 +1,75 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ApprovalTests" Version="6.0.0" />
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="FluentAssertions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="NUnit" Version="3.14.0" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.9.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TagCloud\TagCloud.csproj" />
+    <ProjectReference Include="..\WordHandlers\WordHandlers.csproj" />
+    <ProjectReference Include="..\WordReaders\WordReaders.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="NUnit.Framework" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="WordReadersTests\FileReaderTests\FilesSample\docFiles\doc1_correct.doc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="WordReadersTests\FileReaderTests\FilesSample\docFiles\doc_not_one_word_inline.doc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="WordReadersTests\FileReaderTests\FilesSample\docFiles\doc_trim_spaces.doc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="WordReadersTests\FileReaderTests\FilesSample\docFiles\doc_with_emptyline.doc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="WordReadersTests\FileReaderTests\FilesSample\docxFiles\docx1_correct.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="WordReadersTests\FileReaderTests\FilesSample\docxFiles\docx_not_one_word_inline.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="WordReadersTests\FileReaderTests\FilesSample\docxFiles\docx_trim_spaces.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="WordReadersTests\FileReaderTests\FilesSample\docxFiles\docx_with_emptyline.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="WordReadersTests\FileReaderTests\FilesSample\txtFiles\txt1_correct.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="WordReadersTests\FileReaderTests\FilesSample\txtFiles\txt_not_one_word_inline.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="WordReadersTests\FileReaderTests\FilesSample\txtFiles\txt_trim_spaces.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="WordReadersTests\FileReaderTests\FilesSample\txtFiles\txt_with_emptyline.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="WordReadersTests\FileReaderTests\FilesSample\docxFiles\" />
+  </ItemGroup>
+
+</Project>
