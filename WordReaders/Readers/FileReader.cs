@@ -1,29 +1,53 @@
 ﻿using System.Text;
+using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+using FileSenderRailway;
 using WordReaders.Settings;
 
 namespace WordReaders.Readers;
 
-public class FileReader(WordReaderSettings readerSettings) : IWordReader
+public class FileReader : IWordReader
 {
-    public readonly Encoding Encoding = readerSettings.Encoding;
-    public readonly string FilePath = readerSettings.Path;
+    public readonly Encoding Encoding;
 
-    public IEnumerable<string> Read()
+    public readonly string FilePath;
+
+    public FileReader(WordReaderSettings readerSettings)
     {
-        var words = new List<string>();
+        if(readerSettings == null)
+            throw new ArgumentNullException(nameof(readerSettings), "Reader settings cannot be null.");
+        FilePath = readerSettings.Path ??
+                   throw new ArgumentNullException(nameof(readerSettings.Path), "File path cannot be null.");
+        Encoding = readerSettings.Encoding ?? 
+                   throw new ArgumentNullException(nameof(readerSettings.Encoding), "Encoding cannot be null.");
+        if (!File.Exists(FilePath))
+            throw new FileNotFoundException($"File not found: {FilePath}");
+    }
 
-        var lines = File.ReadAllLines(FilePath, Encoding)
+    public Result<List<string>> Read()
+    {
+        return Result.Of(() => ReadLinesFromFile())
+            .Then(lines => GetWordsFromLines(lines));
+    }
+
+    private IEnumerable<string[]> ReadLinesFromFile()
+    {
+        return File.ReadAllLines(FilePath, Encoding)
             .Where(line => !string.IsNullOrWhiteSpace(line))
             .Select(line => line.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+    }
+
+    private Result<List<string>> GetWordsFromLines(IEnumerable<string[]> lines)
+    {
+        var words = new List<string>();
 
         foreach (var line in lines)
         {
             if (line.Length > 1)
-                throw new Exception("The file must contain no more than one word per line!");
+                return Result.Fail<List<string>>("The file must contain no more than one word per line!");
 
             words.AddRange(line.Select(w => w.Trim()));
         }
 
-        return words;
+        return words.AsResult();
     }
 }

@@ -1,4 +1,5 @@
-﻿using WordReaders.Factory;
+﻿using FileSenderRailway;
+using WordReaders.Factory;
 using WordReaders.Interfaces;
 using WordReaders.Settings;
 
@@ -13,7 +14,7 @@ public class MultiFormatWordReader : IMultiFormatReader
         factory = wordReaderFactory;
     }
 
-    public IEnumerable<string> Read(WordReaderSettings settings)
+    public Result<List<string>> Read(WordReaderSettings settings)
     {
         var wordReader = factory.CreateWordReader(settings);
         return wordReader.Read();

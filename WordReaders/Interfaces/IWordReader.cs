@@ -1,6 +1,8 @@
-﻿namespace WordReaders;
+﻿using FileSenderRailway;
+
+namespace WordReaders;
 
 public interface IWordReader
 {
-    public IEnumerable<string> Read();
+    public Result<List<string>> Read();
 }

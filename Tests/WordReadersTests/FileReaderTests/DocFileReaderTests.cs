@@ -18,9 +18,8 @@ public class DocFileReaderTests : BaseFileReaderTests
     {
         var docReader = new DocFileReader(new WordReaderSettings(@$"{GetFilesParentDir}/doc1_correct.doc",
             Encoding.UTF8));
-        var data = docReader.Read();
 
-        Approvals.Verify(CreateWordsOutput(data));
+        Approvals.Verify(CreateWordsOutput(docReader.Read().GetValueOrThrow()));
     }
 
 
@@ -29,9 +28,11 @@ public class DocFileReaderTests : BaseFileReaderTests
     {
         var docReader = new DocFileReader(new WordReaderSettings(@$"{GetFilesParentDir}/doc_not_one_word_inline.doc",
             Encoding.UTF8));
-        Action act = () => docReader.Read();
-        act.Should().Throw<Exception>()
-            .WithMessage("The doc file must contain no more than one word per line!");
+        var readResult = docReader.Read();
+
+        readResult.IsSuccess.Should().BeFalse();
+        readResult.Error.Should()
+            .BeEquivalentTo("The doc file must contain no more than one word per line!");
     }
 
     [UseReporter(typeof(DiffReporter))]
@@ -40,7 +41,7 @@ public class DocFileReaderTests : BaseFileReaderTests
     {
         var docReader = new DocFileReader(new WordReaderSettings($@"{GetFilesParentDir}/doc_with_emptyline.doc",
             Encoding.UTF8));
-        Approvals.Verify(CreateWordsOutput(docReader.Read()));
+        Approvals.Verify(CreateWordsOutput(docReader.Read().GetValueOrThrow()));
     }
 
 
@@ -50,6 +51,6 @@ public class DocFileReaderTests : BaseFileReaderTests
     {
         var docReader = new DocFileReader(new WordReaderSettings($@"{GetFilesParentDir}/doc_trim_spaces.doc",
             Encoding.UTF8));
-        Approvals.Verify(CreateWordsOutput(docReader.Read()));
+        Approvals.Verify(CreateWordsOutput(docReader.Read().GetValueOrThrow()));
     }
 }

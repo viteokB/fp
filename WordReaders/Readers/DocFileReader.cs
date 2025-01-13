@@ -1,5 +1,7 @@
-﻿using Spire.Doc;
+﻿using FileSenderRailway;
+using Spire.Doc;
 using Spire.Doc.Documents;
+using System.Text;
 using WordReaders.Settings;
 
 namespace WordReaders.Readers;
@@ -8,42 +10,55 @@ public class DocFileReader : IWordReader
 {
     public readonly string FilePath;
 
+    public readonly Encoding Encoding;
+
     public DocFileReader(WordReaderSettings readerSettings)
     {
+        if (readerSettings == null)
+            throw new ArgumentNullException(nameof(readerSettings), "Reader settings cannot be null.");
         FilePath = readerSettings.Path ??
                    throw new ArgumentNullException(nameof(readerSettings.Path), "File path cannot be null.");
-
-        if (!File.Exists(FilePath)) throw new FileNotFoundException($"File not found: {FilePath}");
+        Encoding = readerSettings.Encoding ??
+                   throw new ArgumentNullException(nameof(readerSettings.Encoding), "Encoding cannot be null.");
+        if (!File.Exists(FilePath))
+            throw new FileNotFoundException($"File not found: {FilePath}");
     }
 
-    public IEnumerable<string> Read()
+    public Result<List<string>> Read()
     {
-        var words = new List<string>();
+        return Result.Of(() => GetFileParagraphs())
+            .Then(paragraphs => GetWordsFromParagraphs(paragraphs));
+    }
 
-        // Создаем документ и загружаем файл
+    private IEnumerable<Paragraph> GetFileParagraphs()
+    {
         var document = new Document();
         document.LoadFromFile(FilePath);
 
-        // Перебираем все параграфы в документе
         foreach (Section section in document.Sections)
-        foreach (Paragraph paragraph in section.Paragraphs)
+            foreach (Paragraph paragraph in section.Paragraphs)
+                yield return paragraph;
+    }
+
+    private Result<List<string>> GetWordsFromParagraphs(IEnumerable<Paragraph> paragraphs)
+    {
+        var words = new List<string>();
+
+        foreach (var paragraph in paragraphs)
         {
             var text = paragraph.Text.Trim();
 
-            // Пропускаем пустые параграфы
             if (string.IsNullOrWhiteSpace(text))
                 continue;
 
-            // Разделяем текст на слова
             var lineWords = text.Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
-            // Проверяем, что в параграфе не более одного слова
-            if (lineWords.Length > 1) throw new Exception("The doc file must contain no more than one word per line!");
+            if (lineWords.Length > 1)
+                return Result.Fail<List<string>>("The doc file must contain no more than one word per line!");
 
-            // Добавляем слово в список, если оно не пустое
-            if (lineWords.Length == 1) words.Add(lineWords[0].Trim());
+            words.Add(lineWords.First().Trim());
         }
 
-        return words;
+        return words.AsResult();
     }
 }

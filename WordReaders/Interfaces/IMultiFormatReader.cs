@@ -1,9 +1,10 @@
-﻿using WordReaders.Settings;
+﻿using FileSenderRailway;
+using WordReaders.Settings;
 
 namespace WordReaders.Interfaces
 {
     public interface IMultiFormatReader
     {
-        public IEnumerable<string> Read(WordReaderSettings settings);
+        public Result<List<string>> Read(WordReaderSettings settings);
     }
 }
