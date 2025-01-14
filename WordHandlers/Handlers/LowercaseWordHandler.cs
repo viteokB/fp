@@ -1,9 +1,11 @@
-﻿namespace WordHandlers.Handlers;
+﻿using FileSenderRailway;
+
+namespace WordHandlers.Handlers;
 
 public class LowercaseWordHandler : IWordHandler
 {
-    public IEnumerable<string> ApplyWordHandler(IEnumerable<string> words)
+    public Result<IEnumerable<string>> ApplyWordHandler(IEnumerable<string> words)
     {
-        return words.Select(w => w.ToLower());
+        return words.Select(w => w.ToLower()).AsResult();
     }
 }

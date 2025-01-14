@@ -1,4 +1,5 @@
-﻿using WordHandlers.MyStem;
+﻿using FileSenderRailway;
+using WordHandlers.MyStem;
 using WordHandlers.MyStem.InfoClasses;
 
 namespace WordHandlers.Handlers;
@@ -13,20 +14,15 @@ public class BoringWordHandler : IWordHandler, IDisposable
 
     private bool disposed;
 
-    public void Dispose()
+    public Result<IEnumerable<string>> ApplyWordHandler(IEnumerable<string> words)
     {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+        if (words == null)
+            return Result.Ok(Enumerable.Empty<string>());
 
-    public IEnumerable<string> ApplyWordHandler(IEnumerable<string> words)
-    {
-        if (words == null) return Enumerable.Empty<string>();
-
-        return myStemAnalyzer
-            .AnalyzeWords(words)
+        return Result.Of(() =>myStemAnalyzer
+            .AnalyzeWords(words).GetValueOrThrow()
             .Where(IsNotBoringWord)
-            .Select(wordInfo => wordInfo.Lemma);
+            .Select(wordInfo => wordInfo.Lemma));
     }
 
     private static bool IsNotBoringWord(WordInfo wordInfo)
@@ -41,6 +37,12 @@ public class BoringWordHandler : IWordHandler, IDisposable
                 // Освобождаем управляемые ресурсы
                 myStemAnalyzer.Dispose();
         disposed = true;
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
     ~BoringWordHandler()

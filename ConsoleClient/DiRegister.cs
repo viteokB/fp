@@ -12,6 +12,7 @@ using WordReaders.Factory;
 using TagCloud.Visualisers;
 using WordReaders.Interfaces;
 using WordReaders.Readers;
+using FileSenderRailway;
 
 namespace ConsoleClient
 {
@@ -66,7 +67,7 @@ namespace ConsoleClient
             builder.Register<FilteredWordsCounter>(context =>
             {
                 var wordHandlers = context.Resolve<IEnumerable<IWordHandler>>();
-                var list = new List<Func<IEnumerable<string>, IEnumerable<string>>>();
+                var list = new List<Func<IEnumerable<string>, Result<IEnumerable<string>>>>();
                 foreach (var wordHandler in wordHandlers) list.Add(wordHandler.ApplyWordHandler);
                 return new FilteredWordsCounter(list);
             }).As<IWordCounter>();

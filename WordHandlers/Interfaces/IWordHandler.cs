@@ -1,6 +1,8 @@
-﻿namespace WordHandlers;
+﻿using FileSenderRailway;
+
+namespace WordHandlers;
 
 public interface IWordHandler
 {
-    public IEnumerable<string> ApplyWordHandler(IEnumerable<string> words);
+    public Result<IEnumerable<string>> ApplyWordHandler(IEnumerable<string> words);
 }

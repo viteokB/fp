@@ -5,9 +5,9 @@ namespace WordHandlers.WordCounters;
 
 public class FilteredWordsCounter : IWordCounter
 {
-    private readonly IEnumerable<Func<IEnumerable<string>, IEnumerable<string>>> filterStrategies;
+    private readonly IEnumerable<Func<IEnumerable<string>, Result<IEnumerable<string>>>> filterStrategies;
 
-    public FilteredWordsCounter(IEnumerable<Func<IEnumerable<string>, IEnumerable<string>>> filterStrategies)
+    public FilteredWordsCounter(IEnumerable<Func<IEnumerable<string>, Result<IEnumerable<string>>>> filterStrategies)
     {
         this.filterStrategies = filterStrategies ?? throw new ArgumentNullException(nameof(filterStrategies));
     }
@@ -24,7 +24,7 @@ public class FilteredWordsCounter : IWordCounter
     private IEnumerable<string> GetFilteredWords(IEnumerable<string> words)
     {
         return filterStrategies
-            .Aggregate(words, (words, filter) => filter(words));
+            .Aggregate(words, (words, filter) => filter(words).GetValueOrThrow());
     }
 
     private Dictionary<string, int> GetDictionaryWordsCounts(IEnumerable<string> words)
