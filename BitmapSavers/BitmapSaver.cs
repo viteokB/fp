@@ -1,30 +1,52 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using FileSenderRailway;
 
 namespace BitmapSavers;
 
 public class BitmapSaver
 {
-    public void Save(ImageSaveSettings saveSettings, Bitmap bitmap)
+    public Result<None> Save(ImageSaveSettings saveSettings, Bitmap bitmap)
     {
-        var currentDir = Directory.GetCurrentDirectory();
-        var fullPath = currentDir + saveSettings.Path;
+        var validationResult = ValidateInputs(saveSettings, bitmap);
+        if(!validationResult.IsSuccess)
+            return validationResult;
 
-        if (bitmap == null) throw new ArgumentNullException(nameof(bitmap), "Bitmap cannot be null.");
-        if (string.IsNullOrEmpty(fullPath))
-            throw new ArgumentException("Path cannot be null or empty.", nameof(fullPath));
+        var savePathResult = GetImageSavePath(saveSettings);
+        if (!savePathResult.IsSuccess)
+            return Result.Fail<None>(savePathResult.Error);
+        
+        var imageFormatResult = GetImageFormatResult(savePathResult);
 
-        var extension = Path.GetExtension(fullPath).ToLower();
-        var imageFormat = GetImageFormat(extension);
+        return Result.OfAction(() => bitmap.Save(
+            savePathResult.GetValueOrThrow(), 
+            imageFormatResult.GetValueOrThrow())
+        );
+    }
 
-        try
-        {
-            bitmap.Save(fullPath, imageFormat);
-        }
-        catch (Exception ex)
-        {
-            throw new IOException($"Error saving image to path: {fullPath}. Error: {ex.Message}", ex);
-        }
+    private Result<None> ValidateInputs(ImageSaveSettings saveSettings, Bitmap bitmap)
+    {
+        if (bitmap == null)
+            return Result.Fail<None>("Bitmap cannot be null.");
+        if (saveSettings == null)
+            return Result.Fail<None>("ImageSaveSettings cannot be null.");
+
+        return Result.Ok();
+    }
+
+    private Result<string> GetImageSavePath(ImageSaveSettings saveSettings)
+    {
+        if (string.IsNullOrEmpty(saveSettings.Path))
+            return Result.Fail<string>("ImageSaveSettings.Path cannot be null or empty.");
+
+        return Result.Of(() => Directory.GetCurrentDirectory())
+            .Then(currentDir => Path.Combine(currentDir, saveSettings.Path));
+    }
+
+    private Result<ImageFormat> GetImageFormatResult(Result<string> fullPathResult)
+    {
+        return Result.Of(() => Path.GetExtension(fullPathResult.GetValueOrThrow()).ToLower())
+            .Then(result => GetImageFormat(result));
     }
 
     private ImageFormat GetImageFormat(string extension)

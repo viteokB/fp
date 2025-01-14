@@ -20,7 +20,7 @@ public class TagCloudImageCreator(
         WordReaderSettings wordReaderSettings)
     {
         var fileWords = multiFormatReader.Read(wordReaderSettings); ;
-        var dictCountWords = wordsCounter.CountWords(fileWords);
+        var dictCountWords = wordsCounter.CountWords(fileWords.GetValueOrThrow());
 
         var bitmap = tagCloudCreator.CreateTagCloudBitmap(dictCountWords, imageCreateSettings);
         bitmapSaver.Save(imageSaveSettings, bitmap);
