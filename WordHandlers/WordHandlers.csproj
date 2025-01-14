@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ErrorHandling\ErrorHandling.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="MyStem\mystem.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

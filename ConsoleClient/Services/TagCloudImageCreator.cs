@@ -22,7 +22,7 @@ public class TagCloudImageCreator(
         var fileWords = multiFormatReader.Read(wordReaderSettings); ;
         var dictCountWords = wordsCounter.CountWords(fileWords.GetValueOrThrow());
 
-        var bitmap = tagCloudCreator.CreateTagCloudBitmap(dictCountWords, imageCreateSettings);
+        var bitmap = tagCloudCreator.CreateTagCloudBitmap(dictCountWords.GetValueOrThrow(), imageCreateSettings);
         bitmapSaver.Save(imageSaveSettings, bitmap);
     }
 }
