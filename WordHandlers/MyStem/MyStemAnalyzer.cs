@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
+using FakeItEasy.Configuration;
+using FileSenderRailway;
 using Newtonsoft.Json.Linq;
 using WordHandlers.MyStem.InfoClasses;
 
@@ -17,19 +19,23 @@ public class MyStemAnalyzer : IDisposable
 
     private bool disposed;
 
-    static MyStemAnalyzer()
+    public Result<IEnumerable<WordInfo>> AnalyzeWords(IEnumerable<string> words)
     {
-        StartMyStemProcess();
+        return WriteWordsToInputFile(words)
+            .Then(_ => StartMyStemProcess())
+            .Then(_ => ReadAndParseOutput());
     }
 
-    public void Dispose()
+    private Result<None> WriteWordsToInputFile(IEnumerable<string> words)
     {
-        Dispose(true);
-        GC.SuppressFinalize(this);
+        return Result.OfAction(() => File.WriteAllLines(inputFilePath, words));
     }
 
-    private static void StartMyStemProcess()
+    private static Result<None> StartMyStemProcess()
     {
+        if (!File.Exists(mystemPath))
+            return Result.Fail<None>($"mystem.exe not found on path '{mystemPath}'");
+
         var startInfo = new ProcessStartInfo
         {
             FileName = mystemPath,
@@ -39,33 +45,39 @@ public class MyStemAnalyzer : IDisposable
             CreateNoWindow = true,
             StandardOutputEncoding = Encoding.UTF8
         };
-        process = Process.Start(startInfo);
+        var startProcess = Result.OfAction(() => process = Process.Start(startInfo));
+
+        if (!startProcess.IsSuccess || process == null)
+            return startProcess.RefineError("Process startup error, process mystem.exe was not started");
+
+        return startProcess;
     }
 
-    public IEnumerable<WordInfo> AnalyzeWords(IEnumerable<string> words)
+    private Result<IEnumerable<WordInfo>> ReadAndParseOutput()
     {
-        // Запись слов в файл input.txt
-        File.WriteAllLines(inputFilePath, words);
-
         if (process == null || process.HasExited)
-            StartMyStemProcess();
+            return Result.Fail<IEnumerable<WordInfo>>("MyStem process is not running or has exited.");
 
-        // Чтение результата из стандартного вывода
-        var jsonResult = process.StandardOutput.ReadToEnd();
-
-        // Разделяем вывод на отдельные строки (каждая строка - отдельный JSON объект)
-        var results = jsonResult.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
-            .Select(ParseWordInfos);
-
-        return results;
+        return Result.Of(() =>
+        {
+            string jsonResult = process.StandardOutput.ReadToEnd();
+            return jsonResult.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(winfo => ParseWordInfo(winfo).GetValueOrThrow());
+        }).RefineError("Error reading output");
     }
 
-    private static WordInfo ParseWordInfos(string jsonLine)
+
+    private static Result<WordInfo> ParseWordInfo(string jsonLine)
     {
         var item = JObject.Parse(jsonLine);
-        var text = item["text"]?.ToString() ?? "Неизвестно";
+        var text = item["text"]?.ToString();
+        var analyses = item["analysis"]?.ToObject<List<Analysis>>();
 
-        var analyses = item["analysis"]?.ToObject<List<Analysis>>() ?? new List<Analysis>();
+        if (text == null || analyses == null)
+            return Result.Fail<WordInfo>(
+                $"Error parsing reading JSON line. NULL value of properties: " +
+                $"text = {text == null}, analyses = {analyses == null}");
+
         var partOfSpeach = DefinePartOfSpeech(analyses[0].gr);
         var lex = analyses[0].lex;
         var wordInfos = new WordInfo(text, partOfSpeach, lex);
@@ -105,6 +117,12 @@ public class MyStemAnalyzer : IDisposable
 
             disposed = true;
         }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
     ~MyStemAnalyzer()
