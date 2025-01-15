@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using FileSenderRailway;
+using FluentAssertions;
 using Tests.WordHandlersTests.TestDatas;
 using WordHandlers.Handlers;
 
@@ -18,7 +19,7 @@ public class LowercaseWordHandlerTests
     [TestCaseSource(typeof(LowercaseTestData), nameof(LowercaseTestData.OneWordCases))]
     public void LowercaseWordHandler_ApplyHandler_ShouldLowerOneWord(List<string> given, List<string> expected)
     {
-        var actual = lowercaseWordHandler.ApplyWordHandler(given);
+        var actual = lowercaseWordHandler.ApplyWordHandler(given).GetValueOrThrow();
 
         actual.Should().BeEquivalentTo(expected);
     }
@@ -26,7 +27,7 @@ public class LowercaseWordHandlerTests
     [TestCaseSource(typeof(LowercaseTestData), nameof(LowercaseTestData.FewWordsCases))]
     public void LowercaseWordHandler_ApplyHandler_ShouldLowerFewWords(List<string> given, List<string> expected)
     {
-        var actual = lowercaseWordHandler.ApplyWordHandler(given);
+        var actual = lowercaseWordHandler.ApplyWordHandler(given).GetValueOrThrow();
 
         actual.Should().BeEquivalentTo(expected);
     }

@@ -25,7 +25,7 @@ public class boringHandlerTests
     public void boringHandler_ApplyWordHandlerWithNouns_ReturnsNotEmptyLemmas(List<string> inputWords,
         List<string> expectedWords)
     {
-        var actualResult = boringHandler.ApplyWordHandler(inputWords);
+        var actualResult = boringHandler.ApplyWordHandler(inputWords).GetValueOrThrow();
 
         actualResult.Should().BeEquivalentTo(expectedWords);
     }
@@ -34,7 +34,7 @@ public class boringHandlerTests
     public void boringHandler_ApplyWordHandlerWithAdjectives_ReturnsNotEmptyLemmas(List<string> inputWords,
         List<string> expectedWords)
     {
-        var actualResult = boringHandler.ApplyWordHandler(inputWords);
+        var actualResult = boringHandler.ApplyWordHandler(inputWords).GetValueOrThrow();
 
         actualResult.Should().BeEquivalentTo(expectedWords);
     }
@@ -43,7 +43,7 @@ public class boringHandlerTests
     public void boringHandler_ApplyWordHandlerWithVerbs_ReturnsNotEmptyLemmas(List<string> inputWords,
         List<string> expectedWords)
     {
-        var actualResult = boringHandler.ApplyWordHandler(inputWords);
+        var actualResult = boringHandler.ApplyWordHandler(inputWords).GetValueOrThrow();
 
         actualResult.Should().BeEquivalentTo(expectedWords);
     }
@@ -52,7 +52,7 @@ public class boringHandlerTests
     public void boringHandler_ApplyWordHandlerWithNumerals_ReturnsNotEmptyLemmas(List<string> inputWords,
         List<string> expectedWords)
     {
-        var actualResult = boringHandler.ApplyWordHandler(inputWords);
+        var actualResult = boringHandler.ApplyWordHandler(inputWords).GetValueOrThrow();
 
         actualResult.Should().BeEquivalentTo(expectedWords);
     }
@@ -61,7 +61,7 @@ public class boringHandlerTests
     public void boringHandler_ApplyWordHandlerWithPronouns_ReturnsEmptyLemmas(List<string> inputWords,
         List<string> expectedWords)
     {
-        var actualResult = boringHandler.ApplyWordHandler(inputWords);
+        var actualResult = boringHandler.ApplyWordHandler(inputWords).GetValueOrThrow();
 
         actualResult.Should().BeEquivalentTo(expectedWords);
     }
@@ -70,7 +70,7 @@ public class boringHandlerTests
     public void boringHandler_ApplyWordHandlerWithAdverbs_ReturnsEmptyLemmas(List<string> inputWords,
         List<string> expectedWords)
     {
-        var actualResult = boringHandler.ApplyWordHandler(inputWords);
+        var actualResult = boringHandler.ApplyWordHandler(inputWords).GetValueOrThrow();
 
         actualResult.Should().BeEquivalentTo(expectedWords);
     }
@@ -79,7 +79,7 @@ public class boringHandlerTests
     public void boringHandler_ApplyWordHandlerWithConjunctions_ReturnsEmptyLemmas(List<string> inputWords,
         List<string> expectedWords)
     {
-        var actualResult = boringHandler.ApplyWordHandler(inputWords);
+        var actualResult = boringHandler.ApplyWordHandler(inputWords).GetValueOrThrow();
 
         actualResult.Should().BeEquivalentTo(expectedWords);
     }
@@ -88,7 +88,7 @@ public class boringHandlerTests
     public void boringHandler_ApplyWordHandlerWithPrepositions_ReturnsEmptyLemmas(List<string> inputWords,
         List<string> expectedWords)
     {
-        var actualResult = boringHandler.ApplyWordHandler(inputWords);
+        var actualResult = boringHandler.ApplyWordHandler(inputWords).GetValueOrThrow();
 
         actualResult.Should().BeEquivalentTo(expectedWords);
     }
@@ -98,7 +98,7 @@ public class boringHandlerTests
     public void boringHandler_ApplyWordHandlerWithInterjections_ReturnsEmptyLemmas(List<string> inputWords,
         List<string> expectedWords)
     {
-        var actualResult = boringHandler.ApplyWordHandler(inputWords);
+        var actualResult = boringHandler.ApplyWordHandler(inputWords).GetValueOrThrow();
 
         actualResult.Should().BeEquivalentTo(expectedWords);
     }
@@ -107,7 +107,7 @@ public class boringHandlerTests
     public void boringHandler_ApplyWordHandlerWithParticles_ReturnsEmpryLemmas(List<string> inputWords,
         List<string> expectedWords)
     {
-        var actualResult = boringHandler.ApplyWordHandler(inputWords);
+        var actualResult = boringHandler.ApplyWordHandler(inputWords).GetValueOrThrow();
 
         actualResult.Should().BeEquivalentTo(expectedWords);
     }
@@ -116,7 +116,7 @@ public class boringHandlerTests
     public void boringHandler_ApplyWordHandlerWithMixedWords_ShouldReturnCorrectLemmas(List<string> inputWords,
         List<string> expectedWords)
     {
-        var actualResult = boringHandler.ApplyWordHandler(inputWords);
+        var actualResult = boringHandler.ApplyWordHandler(inputWords).GetValueOrThrow();
 
         actualResult.Should().BeEquivalentTo(expectedWords);
     }

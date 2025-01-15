@@ -12,6 +12,53 @@ public class DocFileReaderTests : BaseFileReaderTests
 {
     protected override string FilesDirectoryName => "docFiles";
 
+    [Test]
+    public void FileReader_InitializeWithNullSettings_ShouldThrowException()
+    {
+        var initAction = () => new DocFileReader(null);
+
+        initAction.Should().Throw<ArgumentNullException>()
+            .WithMessage("Reader settings cannot be null. (Parameter 'readerSettings')");
+    }
+
+    [Test]
+    public void FileReader_InitializeWithNullPath_ShouldThrowException()
+    {
+        var initAction = () => new DocFileReader(new WordReaderSettings(null, Encoding.UTF8));
+
+        initAction.Should().Throw<ArgumentNullException>()
+            .WithMessage("File path cannot be null. (Parameter 'Path')");
+    }
+
+    [Test]
+    public void FileReader_InitializeWithNullEncoding_ShouldThrowException()
+    {
+        var initAction = () => new DocFileReader(
+            new WordReaderSettings($@"{GetFilesParentDir}/doc1_correct.doc", null));
+
+        initAction.Should().Throw<ArgumentNullException>()
+            .WithMessage("Encoding cannot be null. (Parameter 'Encoding')");
+    }
+
+    [Test]
+    public void FileReader_InitializeWithNullPathAndEncoding_ShouldThrowException()
+    {
+        var initAction = () => new DocFileReader(
+            new WordReaderSettings(null, null));
+
+        initAction.Should().Throw<ArgumentNullException>()
+            .WithMessage("File path cannot be null. (Parameter 'Path')");
+    }
+
+    [Test]
+    public void FileReader_Initialize_ShouldThrowExceptionOnUnexistingDoc()
+    {
+        var initAction = () => new DocFileReader(
+            new WordReaderSettings($@"{GetFilesParentDir}/unexisting.doc", Encoding.UTF8));
+
+        initAction.Should().Throw<FileNotFoundException>();
+    }
+
     [UseReporter(typeof(DiffReporter))]
     [Test]
     public void DocFileReader_Read_ShouldReadNormalDocCorrect()

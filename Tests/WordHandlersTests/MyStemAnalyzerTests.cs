@@ -35,35 +35,35 @@ public class MyStemAnalyzerTests
     [TestCaseSource(typeof(MyStemAnalyzerTestData), nameof(MyStemAnalyzerTestData.Nouns))]
     public void MyStemAnalyzer_AnalyzeWord_ShouldAnalyzeNouns(List<string> given, List<WordInfo> expectedInfo)
     {
-        var wordInfo = analyzer.AnalyzeWords(given);
+        var wordInfo = analyzer.AnalyzeWords(given).GetValueOrThrow();
         wordInfo.Should().BeEquivalentTo(expectedInfo);
     }
 
     [TestCaseSource(typeof(MyStemAnalyzerTestData), nameof(MyStemAnalyzerTestData.Verbs))]
     public void MyStemAnalyzer_AnalyzeWord_ShouldAnalyzeVerbs(List<string> given, List<WordInfo> expectedInfo)
     {
-        var wordInfo = analyzer.AnalyzeWords(given);
+        var wordInfo = analyzer.AnalyzeWords(given).GetValueOrThrow();
         wordInfo.Should().BeEquivalentTo(expectedInfo);
     }
 
     [TestCaseSource(typeof(MyStemAnalyzerTestData), nameof(MyStemAnalyzerTestData.Adjectives))]
     public void MyStemAnalyzer_AnalyzeWord_ShouldAnalyzeAdjectives(List<string> given, List<WordInfo> expectedInfo)
     {
-        var wordInfo = analyzer.AnalyzeWords(given);
+        var wordInfo = analyzer.AnalyzeWords(given).GetValueOrThrow();
         wordInfo.Should().BeEquivalentTo(expectedInfo);
     }
 
     [TestCaseSource(typeof(MyStemAnalyzerTestData), nameof(MyStemAnalyzerTestData.Adverbs))]
     public void MyStemAnalyzer_AnalyzeWord_ShouldAnalyzeAdverbs(List<string> given, List<WordInfo> expectedInfo)
     {
-        var wordInfo = analyzer.AnalyzeWords(given);
+        var wordInfo = analyzer.AnalyzeWords(given).GetValueOrThrow();
         wordInfo.Should().BeEquivalentTo(expectedInfo);
     }
 
     [TestCaseSource(typeof(MyStemAnalyzerTestData), nameof(MyStemAnalyzerTestData.MixedWords))]
     public void MyStemAnalyzer_AnalyzeWord_ShouldAnalyzeMixedWords(List<string> given, List<WordInfo> expectedInfo)
     {
-        var wordInfo = analyzer.AnalyzeWords(given);
+        var wordInfo = analyzer.AnalyzeWords(given).GetValueOrThrow();
         wordInfo.Should().BeEquivalentTo(expectedInfo);
     }
 
@@ -71,10 +71,10 @@ public class MyStemAnalyzerTests
     public void MyStemAnalyzer_AnalyzeWord_ShouldAnalyzeEveryTimeAfterFirst(List<string> given,
         List<WordInfo> expectedInfo)
     {
-        var wordInfo = analyzer.AnalyzeWords(given);
+        var wordInfo = analyzer.AnalyzeWords(given).GetValueOrThrow();
         wordInfo.Should().BeEquivalentTo(expectedInfo);
 
-        wordInfo = analyzer.AnalyzeWords(given);
+        wordInfo = analyzer.AnalyzeWords(given).GetValueOrThrow();
         wordInfo.Should().BeEquivalentTo(expectedInfo);
     }
 

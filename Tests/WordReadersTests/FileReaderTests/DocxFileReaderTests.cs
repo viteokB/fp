@@ -12,6 +12,53 @@ public class DocxFileReaderTests : BaseFileReaderTests
 {
     protected override string FilesDirectoryName => "docxFiles";
 
+    [Test]
+    public void DocxFileReader_InitializeWithNullSettings_ShouldThrowException()
+    {
+        var initAction = () => new DocxFileReader(null);
+
+        initAction.Should().Throw<ArgumentNullException>()
+            .WithMessage("Reader settings cannot be null. (Parameter 'readerSettings')");
+    }
+
+    [Test]
+    public void DocxFileReader_InitializeWithNullPath_ShouldThrowException()
+    {
+        var initAction = () => new DocxFileReader(new WordReaderSettings(null, Encoding.UTF8));
+
+        initAction.Should().Throw<ArgumentNullException>()
+            .WithMessage("File path cannot be null. (Parameter 'Path')");
+    }
+
+    [Test]
+    public void DocxFileReader_InitializeWithNullEncoding_ShouldThrowException()
+    {
+        var initAction = () => new DocxFileReader(
+            new WordReaderSettings($@"{GetFilesParentDir}/docx1_correct.docx", null));
+
+        initAction.Should().Throw<ArgumentNullException>()
+            .WithMessage("Encoding cannot be null. (Parameter 'Encoding')");
+    }
+
+    [Test]
+    public void DocxFileReader_InitializeWithNullPathAndEncoding_ShouldThrowException()
+    {
+        var initAction = () => new DocxFileReader(
+            new WordReaderSettings(null, null));
+
+        initAction.Should().Throw<ArgumentNullException>()
+            .WithMessage("File path cannot be null. (Parameter 'Path')");
+    }
+
+    [Test]
+    public void DocxFileReader_Initialize_ShouldThrowExceptionOnUnexistingDocx()
+    {
+        var initAction = () => new DocxFileReader(
+            new WordReaderSettings($@"{GetFilesParentDir}/unexisting.docx", Encoding.UTF8));
+
+        initAction.Should().Throw<FileNotFoundException>();
+    }
+
     [UseReporter(typeof(DiffReporter))]
     [Test]
     public void DocxFileReader_Read_ShouldReadNormalDocxCorrect()
