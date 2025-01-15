@@ -22,6 +22,9 @@ public class TagCloudBitmapCreator
         if (wordFreqDictionary == null || wordFreqDictionary.Count == 0)
             return Result.Fail<Bitmap>("The word frequency dictionary cannot be null or empty.");
 
+        if (settings == null)
+            return Result.Fail<Bitmap>("The ImageCreateSettings cannot be null");
+
         var maxFreq = wordFreqDictionary.Values.Max();
         var cloudWords = new List<TagCloudWord>();
 
@@ -33,8 +36,13 @@ public class TagCloudBitmapCreator
             var fontSize = TransformFreqToSize(settings.FontMinSize, settings.FontMaxSize, freq, maxFreq);
             var rectangleSize = TextSize(word, fontSize, settings.FontFamily);
 
-            var rectangle = layouter.PutNextRectangle(rectangleSize).GetValueOrThrow();
-            cloudWords.Add(new TagCloudWord(rectangle, word, fontSize));
+            var rectangle = layouter.PutNextRectangle(rectangleSize);
+
+            if (!rectangle.IsSuccess)
+                return Result.Fail<Bitmap>(rectangle.Error)
+                    .RefineError("Error getting the rectangle size");
+
+            cloudWords.Add(new TagCloudWord(rectangle.GetValueOrThrow(), word, fontSize));
         }
 
         return bitmapCreator.GenerateImage(cloudWords, settings);

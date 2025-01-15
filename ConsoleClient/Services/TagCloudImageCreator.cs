@@ -1,4 +1,5 @@
 ﻿using BitmapSavers;
+using FileSenderRailway;
 using TagCloud;
 using TagCloud.Visualisers;
 using WordHandlers.Interfaces;
@@ -14,15 +15,15 @@ public class TagCloudImageCreator(
     IWordCounter wordsCounter,
     TagCloudBitmapCreator tagCloudCreator)
 {
-    public void CreateCloudImage(
+    public Result<None> CreateCloudImage(
         ImageSaveSettings imageSaveSettings,
         ImageCreateSettings imageCreateSettings,
         WordReaderSettings wordReaderSettings)
     {
-        var fileWords = multiFormatReader.Read(wordReaderSettings); ;
-        var dictCountWords = wordsCounter.CountWords(fileWords.GetValueOrThrow());
-
-        var bitmap = tagCloudCreator.CreateTagCloudBitmap(dictCountWords.GetValueOrThrow(), imageCreateSettings);
-        bitmapSaver.Save(imageSaveSettings, bitmap.GetValueOrThrow());
+        return multiFormatReader.Read(wordReaderSettings)
+            .Then(wordsCounter.CountWords)
+            .Then(dictCountWords =>
+                tagCloudCreator.CreateTagCloudBitmap(dictCountWords, imageCreateSettings))
+            .Then(bitmap => bitmapSaver.Save(imageSaveSettings, bitmap));
     }
 }
