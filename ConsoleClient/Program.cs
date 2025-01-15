@@ -16,15 +16,17 @@ internal class Program
         {
             options.DisplayOptions();
             var settingsProvider = new SettingsProvider(options);
+
             var settings = settingsProvider.GetSettingsStorage();
-            var builder = new ContainerBuilder();
 
-            DiRegister.RegisterAll(builder, settings);
-            var container = builder.Build();
+            var container = settings.Then(DiRegister.RegisterAll);
 
-            var createCloudImageResult = Result.Of(() => container.Resolve<TagCloudImageCreator>())
-                .Then(creator => 
-                    creator.CreateCloudImage(settings.ImageSave, settings.ImageCreate, settings.ReaderSettings));
+            var createCloudImageResult = container
+                .Then(container => container.Resolve<TagCloudImageCreator>())
+                .Then(creator => creator.CreateCloudImage(
+                    settings.GetValueOrThrow().ImageSave, 
+                    settings.GetValueOrThrow().ImageCreate,
+                    settings.GetValueOrThrow().ReaderSettings));
 
             if (!createCloudImageResult.IsSuccess)
             {
@@ -42,16 +44,6 @@ internal class Program
             }
 
             Console.ResetColor();
-            //try
-            //{
-            //    var tagCloudImageCreator = container.Resolve<TagCloudImageCreator>();
-            //    tagCloudImageCreator.CreateCloudImage(settings.ImageSave, settings.ImageCreate, settings.ReaderSettings);
-            //    Console.WriteLine("Облако тегов успешно создано.");
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine($"Произошла ошибка при создании облака тегов: {ex.Message}");
-            //}
         })
         .WithNotParsed(errors =>
         {

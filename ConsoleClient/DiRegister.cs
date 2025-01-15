@@ -20,10 +20,12 @@ namespace ConsoleClient
     {
         private static bool isRegistred = false;
 
-        public static void RegisterAll(ContainerBuilder builder, SettingsStorage settings)
+        public static IContainer RegisterAll(SettingsStorage settings)
         {
             if (isRegistred)
                 throw new InvalidOperationException("RegisterAll can only be called one time");
+
+            var builder = new ContainerBuilder();
 
             RegisterBitmapSaverClasses(builder);
             RegisterTagCloudClasses(builder);
@@ -31,6 +33,8 @@ namespace ConsoleClient
             RegisterWordReadersClasses(builder);
             RegisterByInstance(builder, settings);
             RegisterConsoleClientServices(builder);
+
+            return builder.Build();
         }
 
         private static void RegisterConsoleClientServices(ContainerBuilder builder)
