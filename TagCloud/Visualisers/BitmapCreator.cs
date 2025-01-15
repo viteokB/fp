@@ -51,6 +51,8 @@ public class BitmapCreator : IBitmapCreator
         return Result.Of(() =>
         {
             bitmapGraphics.Deconstruct(out var graphics, out var bitmap);
+            var wordsX = new SortedSet<int>();
+            var wordsY = new SortedSet<int>();
 
             using (graphics)
             {
@@ -60,14 +62,38 @@ public class BitmapCreator : IBitmapCreator
                 foreach (var tagWord in cloudWords)
                 {
                     using var font = new Font(settings.FontFamily, tagWord.FontSize);
-
+                    
+                    AddWordCoordinates(wordsX, wordsY, tagWord.Box);
                     graphics.DrawString(tagWord.TextWord, font, brush, tagWord.Box.Location);
                 }
             }
 
+            if (!AreWordsInImageBoundaries(wordsX, wordsY, settings))
+                throw new ArgumentException("The words go beyond the boundaries of the image size," +
+                                            $"\nSet bigger values");
+
             return bitmap;
         });
     }
+
+    private void AddWordCoordinates(SortedSet<int> wordsX, SortedSet<int> wordsY, Rectangle rectangle)
+    {
+        wordsX.Add(rectangle.X); //minx
+
+        wordsX.Add(rectangle.X + rectangle.Width); //maxX
+
+        wordsY.Add(rectangle.Y); //minY
+
+        wordsY.Add(rectangle.Y + rectangle.Height); //maxY
+    }
+
+    private bool AreWordsInImageBoundaries(SortedSet<int> wordsX, SortedSet<int> wordsY, ImageCreateSettings settings)
+    {
+        return wordsX.Min >= 0 && wordsY.Min >= 0 &&
+               wordsX.Max <= settings.ImageSize.Width &&
+               wordsY.Max <= settings.ImageSize.Height;
+    }
+
 
     private record BitmapGraphics(Graphics Graphics, Bitmap Bitmap);
 }
