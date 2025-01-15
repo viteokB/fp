@@ -16,7 +16,7 @@ public class MultiFormatWordReader : IMultiFormatReader
 
     public Result<List<string>> Read(WordReaderSettings settings)
     {
-        var wordReader = factory.CreateWordReader(settings);
-        return wordReader.Read();
+        return Result.Of(() => factory.CreateWordReader(settings))
+            .Then(wordReader => wordReader.Read());
     }
 }
