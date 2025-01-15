@@ -1,10 +1,8 @@
-﻿using DocumentFormat.OpenXml.Packaging;
+﻿using System.Text;
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using System.Text;
 using FileSenderRailway;
 using WordReaders.Settings;
-using DocumentFormat.OpenXml.ExtendedProperties;
-using Spire.Doc;
 
 namespace WordReaders.Readers;
 

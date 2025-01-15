@@ -11,11 +11,12 @@ public class None
 
 public struct Result<T>
 {
-    public Result(string error, T value = default(T))
+    public Result(string error, T value = default)
     {
         Error = error;
         Value = value;
     }
+
     public static implicit operator Result<T>(T v)
     {
         return Result.Ok(v);
@@ -23,11 +24,13 @@ public struct Result<T>
 
     public string Error { get; }
     internal T Value { get; }
+
     public T GetValueOrThrow()
     {
         if (IsSuccess) return Value;
         throw new InvalidOperationException($"No value. Only Error {Error}");
     }
+
     public bool IsSuccess => Error == null;
 }
 
@@ -42,6 +45,7 @@ public static class Result
     {
         return new Result<T>(null, value);
     }
+
     public static Result<None> Ok()
     {
         return Ok<None>(null);
@@ -134,10 +138,7 @@ public static class Result
         this Result<TInput> input,
         Action cleanupAction)
     {
-        if (!input.IsSuccess)
-        {
-            cleanupAction?.Invoke();
-        }
+        if (!input.IsSuccess) cleanupAction?.Invoke();
         return input;
     }
 }

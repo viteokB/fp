@@ -7,14 +7,13 @@ namespace TagCloud;
 
 public class TagCloudBitmapCreator
 {
-    private readonly ICloudLayouter layouter;
-
     private readonly IBitmapCreator bitmapCreator;
+    private readonly ICloudLayouter layouter;
 
     public TagCloudBitmapCreator(ICloudLayouter layouter, IBitmapCreator creator)
     {
         this.layouter = layouter;
-        this.bitmapCreator = creator;
+        bitmapCreator = creator;
     }
 
     public Result<Bitmap> CreateTagCloudBitmap(Dictionary<string, int> wordFreqDictionary, ImageCreateSettings settings)

@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using FakeItEasy.Configuration;
 using FileSenderRailway;
 using Newtonsoft.Json.Linq;
 using WordHandlers.MyStem.InfoClasses;
@@ -18,6 +17,12 @@ public class MyStemAnalyzer : IDisposable
     private static readonly HashSet<char> partSpeachSeparator = new() { ',', '=' };
 
     private bool disposed;
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
     public Result<IEnumerable<WordInfo>> AnalyzeWords(IEnumerable<string> words)
     {
@@ -60,7 +65,7 @@ public class MyStemAnalyzer : IDisposable
 
         return Result.Of(() =>
         {
-            string jsonResult = process.StandardOutput.ReadToEnd();
+            var jsonResult = process.StandardOutput.ReadToEnd();
             return jsonResult.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(winfo => ParseWordInfo(winfo).GetValueOrThrow());
         }).RefineError("Error reading output");
@@ -117,12 +122,6 @@ public class MyStemAnalyzer : IDisposable
 
             disposed = true;
         }
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
     }
 
     ~MyStemAnalyzer()

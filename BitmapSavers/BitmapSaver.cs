@@ -9,17 +9,17 @@ public class BitmapSaver
     public Result<None> Save(ImageSaveSettings saveSettings, Bitmap bitmap)
     {
         var validationResult = ValidateInputs(saveSettings, bitmap);
-        if(!validationResult.IsSuccess)
+        if (!validationResult.IsSuccess)
             return validationResult;
 
         var savePathResult = GetImageSavePath(saveSettings);
         if (!savePathResult.IsSuccess)
             return Result.Fail<None>(savePathResult.Error);
-        
+
         var imageFormatResult = GetImageFormatResult(savePathResult);
 
         return Result.OfAction(() => bitmap.Save(
-            savePathResult.GetValueOrThrow(), 
+            savePathResult.GetValueOrThrow(),
             imageFormatResult.GetValueOrThrow())
         );
     }

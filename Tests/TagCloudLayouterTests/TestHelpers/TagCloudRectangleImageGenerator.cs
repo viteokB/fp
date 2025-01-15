@@ -26,7 +26,8 @@ public class TagCloudImageGenerator : IDisposable
     {
         var newBitmap = new Bitmap(bitmapSize.Width, bitmapSize.Height);
 
-        foreach (var size in configurationFunc()) Visualiser.DrawRectangle(newBitmap, layouter.PutNextRectangle(size));
+        foreach (var size in configurationFunc())
+            Visualiser.DrawRectangle(newBitmap, layouter.PutNextRectangle(size).GetValueOrThrow());
 
         return newBitmap;
     }
@@ -43,7 +44,8 @@ public class TagCloudImageGenerator : IDisposable
     public void AddToCurrentImage(Bitmap bitmap, ICloudLayouter layouter,
         Func<IEnumerable<Size>> configurationFunc)
     {
-        foreach (var size in configurationFunc()) Visualiser.DrawRectangle(bitmap, layouter.PutNextRectangle(size));
+        foreach (var size in configurationFunc())
+            Visualiser.DrawRectangle(bitmap, layouter.PutNextRectangle(size).GetValueOrThrow());
     }
 
     public void AddToCurrentImage(Bitmap bitmap, List<Rectangle> rectangles)

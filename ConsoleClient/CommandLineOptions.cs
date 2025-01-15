@@ -1,17 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Autofac;
-using ConsoleClient.Services;
 using ConsoleClient.CustomAttributes;
+using ConsoleClient.Services;
 using FileSenderRailway;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace ConsoleClient;
 
-[MaxFontSize()]
+[MaxFontSize]
 public class CommandLineOptions
 {
-    public static int Main(string[] args) => CommandLineApplication.Execute<CommandLineOptions>(args);
-
     [MinLength(1, ErrorMessage = "Path to read file should be not null or empty")]
     [Option(Description = "Path to file with words for reading", ShortName = "r", LongName = "pathToWordFile")]
     public string? PathToWordFile { get; } = "file.txt";
@@ -52,20 +50,9 @@ public class CommandLineOptions
     [Option(Description = "Spiral generator type", ShortName = "sg", LongName = "spiralGeneratorType")]
     public string? spiralGeneratorString { get; } = "c";
 
-    // Метод для вывода значений параметров
-    public void DisplayOptions()
+    public static int Main(string[] args)
     {
-        Console.WriteLine("Принятые параметры:");
-        Console.WriteLine($"- PathToWordFile: {PathToWordFile}");
-        Console.WriteLine($"- PathToSaveImage: {PathToSaveImage}");
-        Console.WriteLine($"- ImageWidth: {ImageWidth}");
-        Console.WriteLine($"- ImageHeight: {ImageHeight}");
-        Console.WriteLine($"- BackgroundColor: {BackgroundColor}");
-        Console.WriteLine($"- WordColor: {WordColor}");
-        Console.WriteLine($"- FontFamily: {FontFamily}");
-        Console.WriteLine($"- MinFontSize: {MinFontSize}");
-        Console.WriteLine($"- MaxFontSize: {MaxFontSize}");
-        Console.WriteLine($"- SpiralGeneratorType: {spiralGeneratorString}");
+        return CommandLineApplication.Execute<CommandLineOptions>(args);
     }
 
     private void OnExecute()
@@ -95,7 +82,7 @@ public class CommandLineOptions
             Console.ForegroundColor = ConsoleColor.Green; // Устанавливаем зеленый цвет
             Console.WriteLine();
             Console.WriteLine("The tag cloud was created successfully");
-            Console.WriteLine($"Image location: {this.PathToSaveImage}");
+            Console.WriteLine($"Image location: {PathToSaveImage}");
         }
 
         Console.ResetColor();

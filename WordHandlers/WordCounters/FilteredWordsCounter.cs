@@ -14,8 +14,8 @@ public class FilteredWordsCounter : IWordCounter
 
     public Result<Dictionary<string, int>> CountWords(IEnumerable<string> words)
     {
-        if (words == null) 
-            Result.Fail<Dictionary<string,int>>("Input words cannot be null.");
+        if (words == null)
+            Result.Fail<Dictionary<string, int>>("Input words cannot be null.");
 
         return Result.Of(() => GetFilteredWords(words))
             .Then(GetDictionaryWordsCounts);

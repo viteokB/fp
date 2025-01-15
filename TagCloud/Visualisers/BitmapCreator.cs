@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Text;
 using FileSenderRailway;
-using FluentAssertions;
 
 namespace TagCloud.Visualisers;
 
@@ -28,7 +27,7 @@ public class BitmapCreator : IBitmapCreator
             return Result.Fail<Bitmap>("Height of the bitmap image must be positive");
 
         return Result.Ok(new Bitmap(
-            settings.ImageSize.Width, 
+            settings.ImageSize.Width,
             settings.ImageSize.Height));
     }
 
@@ -44,7 +43,7 @@ public class BitmapCreator : IBitmapCreator
         }).HandleOnFail(graphics.Dispose);
     }
 
-    private Result<Bitmap> WriteWordsOnImage(BitmapGraphics bitmapGraphics, 
+    private Result<Bitmap> WriteWordsOnImage(BitmapGraphics bitmapGraphics,
         IEnumerable<TagCloudWord> cloudWords,
         ImageCreateSettings settings)
     {
@@ -62,7 +61,7 @@ public class BitmapCreator : IBitmapCreator
                 foreach (var tagWord in cloudWords)
                 {
                     using var font = new Font(settings.FontFamily, tagWord.FontSize);
-                    
+
                     AddWordCoordinates(wordsX, wordsY, tagWord.Box);
                     graphics.DrawString(tagWord.TextWord, font, brush, tagWord.Box.Location);
                 }
@@ -70,7 +69,7 @@ public class BitmapCreator : IBitmapCreator
 
             if (!AreWordsInImageBoundaries(wordsX, wordsY, settings))
                 throw new ArgumentException("The words go beyond the boundaries of the image size," +
-                                            $"\nSet bigger values");
+                                            "\nSet bigger values");
 
             return bitmap;
         });

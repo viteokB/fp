@@ -1,16 +1,15 @@
-﻿using FileSenderRailway;
+﻿using System.Text;
+using FileSenderRailway;
 using Spire.Doc;
 using Spire.Doc.Documents;
-using System.Text;
 using WordReaders.Settings;
 
 namespace WordReaders.Readers;
 
 public class DocFileReader : IWordReader
 {
-    public readonly string FilePath;
-
     public readonly Encoding Encoding;
+    public readonly string FilePath;
 
     public DocFileReader(WordReaderSettings readerSettings)
     {
@@ -36,8 +35,8 @@ public class DocFileReader : IWordReader
         document.LoadFromFile(FilePath);
 
         foreach (Section section in document.Sections)
-            foreach (Paragraph paragraph in section.Paragraphs)
-                yield return paragraph;
+        foreach (Paragraph paragraph in section.Paragraphs)
+            yield return paragraph;
     }
 
     private Result<List<string>> GetWordsFromParagraphs(IEnumerable<Paragraph> paragraphs)

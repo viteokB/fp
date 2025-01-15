@@ -3,7 +3,6 @@ using FileSenderRailway;
 using TagCloud;
 using TagCloud.Visualisers;
 using WordHandlers.Interfaces;
-using WordReaders.Factory;
 using WordReaders.Interfaces;
 using WordReaders.Settings;
 

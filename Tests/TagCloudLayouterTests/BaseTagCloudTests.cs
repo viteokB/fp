@@ -46,7 +46,8 @@ public abstract class BaseTagCloudTests
     [Test]
     public void TagCloudLayouter_WhenAddFirstRectangle_ContainOneAndSameRectangle()
     {
-        var rectangle = _layouter.PutNextRectangle(new Size(20, 10));
+        var rectangle = _layouter.PutNextRectangle(new Size(20, 10))
+            .GetValueOrThrow();
 
         _layouter.Rectangles
             .Select(r => r).Should().HaveCount(1).And.Contain(rectangle);
@@ -59,7 +60,7 @@ public abstract class BaseTagCloudTests
 
         var rectangle = _layouter.PutNextRectangle(givenSize);
 
-        rectangle.Size.Should().BeEquivalentTo(givenSize);
+        rectangle.GetValueOrThrow().Size.Should().BeEquivalentTo(givenSize);
     }
 
     [TestCase(0, 0)]

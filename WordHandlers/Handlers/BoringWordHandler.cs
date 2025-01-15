@@ -14,12 +14,18 @@ public class BoringWordHandler : IWordHandler, IDisposable
 
     private bool disposed;
 
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
     public Result<IEnumerable<string>> ApplyWordHandler(IEnumerable<string> words)
     {
         if (words == null)
             return Result.Ok(Enumerable.Empty<string>());
 
-        return Result.Of(() =>myStemAnalyzer
+        return Result.Of(() => myStemAnalyzer
             .AnalyzeWords(words).GetValueOrThrow()
             .Where(IsNotBoringWord)
             .Select(wordInfo => wordInfo.Lemma));
@@ -37,12 +43,6 @@ public class BoringWordHandler : IWordHandler, IDisposable
                 // Освобождаем управляемые ресурсы
                 myStemAnalyzer.Dispose();
         disposed = true;
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
     }
 
     ~BoringWordHandler()

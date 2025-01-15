@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using FileSenderRailway;
 using WordReaders.Settings;
 
@@ -13,12 +12,12 @@ public class FileReader : IWordReader
 
     public FileReader(WordReaderSettings readerSettings)
     {
-        if(readerSettings == null)
+        if (readerSettings == null)
             throw new ArgumentNullException(nameof(readerSettings), "Reader settings cannot be null.");
         FilePath = readerSettings.Path ??
-            throw new ArgumentNullException(nameof(readerSettings.Path), "File path cannot be null.");
-        Encoding = readerSettings.Encoding ?? 
-            throw new ArgumentNullException(nameof(readerSettings.Encoding), "Encoding cannot be null.");
+                   throw new ArgumentNullException(nameof(readerSettings.Path), "File path cannot be null.");
+        Encoding = readerSettings.Encoding ??
+                   throw new ArgumentNullException(nameof(readerSettings.Encoding), "Encoding cannot be null.");
         if (!File.Exists(FilePath))
             throw new FileNotFoundException($"File not found: {FilePath}");
     }

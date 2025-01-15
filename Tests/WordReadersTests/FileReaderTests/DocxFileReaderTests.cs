@@ -75,7 +75,7 @@ public class DocxFileReaderTests : BaseFileReaderTests
         var docxReader =
             new DocxFileReader(new WordReaderSettings($@"{GetFilesParentDir}/docx_not_one_word_inline.docx",
                 Encoding.UTF8));
-        var readResult= docxReader.Read();
+        var readResult = docxReader.Read();
 
         readResult.IsSuccess.Should().BeFalse();
         readResult.Error.Should()

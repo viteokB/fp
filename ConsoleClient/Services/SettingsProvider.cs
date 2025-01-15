@@ -13,20 +13,20 @@ public class SettingsProvider(CommandLineOptions options) : ISettingsProvider
 {
     public Result<SettingsStorage> GetSettingsStorage()
     {
-        return Result.Of(() => 
+        return Result.Of(() =>
             new SettingsStorage(
-            new ImageCreateSettings(
-                new Size(options.ImageWidth, options.ImageHeight),
-                Color.FromName(options.BackgroundColor),
-                new FontFamily(options.FontFamily),
-                options.MinFontSize,
-                options.MaxFontSize,
-                Color.FromName(options.WordColor),
-                DefineSpiralPointGeneratorsType(options.spiralGeneratorString).GetValueOrThrow()
-            ),
-            new ImageSaveSettings(options.PathToSaveImage),
-            new WordReaderSettings(options.PathToWordFile, Encoding.UTF8)
-        ));
+                new ImageCreateSettings(
+                    new Size(options.ImageWidth, options.ImageHeight),
+                    Color.FromName(options.BackgroundColor),
+                    new FontFamily(options.FontFamily),
+                    options.MinFontSize,
+                    options.MaxFontSize,
+                    Color.FromName(options.WordColor),
+                    DefineSpiralPointGeneratorsType(options.spiralGeneratorString).GetValueOrThrow()
+                ),
+                new ImageSaveSettings(options.PathToSaveImage),
+                new WordReaderSettings(options.PathToWordFile, Encoding.UTF8)
+            ));
     }
 
     public Result<SpiralPointGeneratorsType> DefineSpiralPointGeneratorsType(string str)
@@ -36,7 +36,7 @@ public class SettingsProvider(CommandLineOptions options) : ISettingsProvider
             "c" => SpiralPointGeneratorsType.Circular,
             "t" => SpiralPointGeneratorsType.Triangular,
             "s" => SpiralPointGeneratorsType.Square,
-            _ =>  Result.Fail<SpiralPointGeneratorsType>($"Non-existing SpiralPointGenerator : {str}")
+            _ => Result.Fail<SpiralPointGeneratorsType>($"Non-existing SpiralPointGenerator : {str}")
         };
     }
 }
