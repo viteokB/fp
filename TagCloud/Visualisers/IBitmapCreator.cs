@@ -1,8 +1,9 @@
 ﻿using System.Drawing;
+using FileSenderRailway;
 
 namespace TagCloud.Visualisers;
 
 public interface IBitmapCreator
 {
-    public Bitmap GenerateImage(IEnumerable<TagCloudWord> cloudWords, ImageCreateSettings settings);
+    public Result<Bitmap> GenerateImage(IEnumerable<TagCloudWord> cloudWords, ImageCreateSettings settings);
 }

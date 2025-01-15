@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using FileSenderRailway;
 using TagCloud.Interfaces;
 using TagCloud.Visualisers;
 
@@ -16,11 +17,10 @@ public class TagCloudBitmapCreator
         this.bitmapCreator = creator;
     }
 
-    public Bitmap CreateTagCloudBitmap(Dictionary<string, int> wordFreqDictionary, ImageCreateSettings settings)
+    public Result<Bitmap> CreateTagCloudBitmap(Dictionary<string, int> wordFreqDictionary, ImageCreateSettings settings)
     {
         if (wordFreqDictionary == null || wordFreqDictionary.Count == 0)
-            throw new ArgumentException("The word frequency dictionary cannot be null or empty.",
-                nameof(wordFreqDictionary));
+            return Result.Fail<Bitmap>("The word frequency dictionary cannot be null or empty.");
 
         var maxFreq = wordFreqDictionary.Values.Max();
         var cloudWords = new List<TagCloudWord>();
@@ -33,7 +33,7 @@ public class TagCloudBitmapCreator
             var fontSize = TransformFreqToSize(settings.FontMinSize, settings.FontMaxSize, freq, maxFreq);
             var rectangleSize = TextSize(word, fontSize, settings.FontFamily);
 
-            var rectangle = layouter.PutNextRectangle(rectangleSize);
+            var rectangle = layouter.PutNextRectangle(rectangleSize).GetValueOrThrow();
             cloudWords.Add(new TagCloudWord(rectangle, word, fontSize));
         }
 

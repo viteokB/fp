@@ -129,4 +129,15 @@ public static class Result
     {
         return input.ReplaceError(err => errorMessage + ". " + err);
     }
+
+    public static Result<TInput> HandleOnFail<TInput>(
+        this Result<TInput> input,
+        Action cleanupAction)
+    {
+        if (!input.IsSuccess)
+        {
+            cleanupAction?.Invoke();
+        }
+        return input;
+    }
 }

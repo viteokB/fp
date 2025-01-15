@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using FileSenderRailway;
 using TagCloud.Interfaces;
 
 namespace TagCloud;
@@ -14,10 +15,10 @@ public class TagCloudLayouter : ICloudLayouter
 
     public List<Rectangle> Rectangles { get; } = new();
 
-    public Rectangle PutNextRectangle(Size rectangleSize)
+    public Result<Rectangle> PutNextRectangle(Size rectangleSize)
     {
         if (rectangleSize.Width <= 0 || rectangleSize.Height <= 0)
-            throw new ArgumentException("The height and width of the Rectangle must be greater than 0");
+            return Result.Fail<Rectangle>("The height and width of the Rectangle must be greater than 0");
 
         foreach (var point in PointGenerator.GeneratePoints())
         {
@@ -34,6 +35,6 @@ public class TagCloudLayouter : ICloudLayouter
             }
         }
 
-        throw new InvalidOperationException("No suitable location found for the rectangle.");
+        return Result.Fail<Rectangle>("No suitable location found for the rectangle.");
     }
 }
