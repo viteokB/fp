@@ -25,10 +25,10 @@ public class BoringWordHandler : IWordHandler, IDisposable
         if (words == null)
             return Result.Ok(Enumerable.Empty<string>());
 
-        return Result.Of(() => myStemAnalyzer
-            .AnalyzeWords(words).GetValueOrThrow()
-            .Where(IsNotBoringWord)
-            .Select(wordInfo => wordInfo.Lemma));
+        return myStemAnalyzer
+            .AnalyzeWords(words)
+            .Then(words => words.Where(IsNotBoringWord)
+                .Select(wordInfo => wordInfo.Lemma));
     }
 
     private static bool IsNotBoringWord(WordInfo wordInfo)
