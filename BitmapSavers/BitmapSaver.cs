@@ -13,15 +13,15 @@ public class BitmapSaver
             return validationResult;
 
         var savePathResult = GetImageSavePath(saveSettings);
-        if (!savePathResult.IsSuccess)
-            return Result.Fail<None>(savePathResult.Error);
 
-        var imageFormatResult = GetImageFormatResult(savePathResult);
+        //Тут проверится savePathResult, на IsSuccess
+        var imageFormatResult = savePathResult
+            .Then(path => GetImageFormatResult(path));
 
-        return Result.OfAction(() => bitmap.Save(
-            savePathResult.GetValueOrThrow(),
-            imageFormatResult.GetValueOrThrow())
-        );
+        return imageFormatResult
+                .Then((imageFormat) => bitmap.Save(
+                    savePathResult.GetValueOrThrow(),
+                    imageFormat));
     }
 
     private Result<None> ValidateInputs(ImageSaveSettings saveSettings, Bitmap bitmap)
@@ -45,7 +45,8 @@ public class BitmapSaver
 
     private Result<ImageFormat> GetImageFormatResult(Result<string> fullPathResult)
     {
-        return Result.Of(() => Path.GetExtension(fullPathResult.GetValueOrThrow()).ToLower())
+        return fullPathResult
+            .Then(path => Path.GetExtension(path).ToLower())
             .Then(result => GetImageFormat(result));
     }
 
