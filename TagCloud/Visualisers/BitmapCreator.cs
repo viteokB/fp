@@ -26,50 +26,50 @@ public class BitmapCreator : IBitmapCreator
         if (settings.ImageSize.Height <= 0)
             return Result.Fail<Bitmap>("Height of the bitmap image must be positive");
 
-        return Result.Ok(new Bitmap(
+        return new Bitmap(
             settings.ImageSize.Width,
-            settings.ImageSize.Height));
+            settings.ImageSize.Height);
     }
 
-    private Result<BitmapGraphics> SetImageBackground(Bitmap bitmap, Color color)
+    private Result<Bitmap> SetImageBackground(Bitmap bitmap, Color color)
     {
-        var graphics = Graphics.FromImage(bitmap);
-
         return Result.Of(() =>
         {
+            using var graphics = Graphics.FromImage(bitmap);
+
             graphics.Clear(color);
 
-            return new BitmapGraphics(graphics, bitmap);
-        }).HandleOnFail(graphics.Dispose);
+            return bitmap;
+        });
     }
 
-    private Result<Bitmap> WriteWordsOnImage(BitmapGraphics bitmapGraphics,
+    private Result<Bitmap> WriteWordsOnImage(Bitmap bitmap,
         IEnumerable<TagCloudWord> cloudWords,
         ImageCreateSettings settings)
     {
         return Result.Of(() =>
         {
-            bitmapGraphics.Deconstruct(out var graphics, out var bitmap);
+            using var graphics = Graphics.FromImage(bitmap);
+
             var wordsX = new SortedSet<int>();
             var wordsY = new SortedSet<int>();
 
-            using (graphics)
+            graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+            using var brush = new SolidBrush(settings.WordColor);
+
+            foreach (var tagWord in cloudWords)
             {
-                graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
-                using var brush = new SolidBrush(settings.WordColor);
+                using var font = new Font(settings.FontFamily, tagWord.FontSize);
 
-                foreach (var tagWord in cloudWords)
-                {
-                    using var font = new Font(settings.FontFamily, tagWord.FontSize);
-
-                    AddWordCoordinates(wordsX, wordsY, tagWord.Box);
-                    graphics.DrawString(tagWord.TextWord, font, brush, tagWord.Box.Location);
-                }
+                AddWordCoordinates(wordsX, wordsY, tagWord.Box);
+                graphics.DrawString(tagWord.TextWord, font, brush, tagWord.Box.Location);
             }
 
             if (!AreWordsInImageBoundaries(wordsX, wordsY, settings))
+            {
                 throw new ArgumentException("The words go beyond the boundaries of the image size," +
                                             "\nSet bigger values");
+            }
 
             return bitmap;
         });

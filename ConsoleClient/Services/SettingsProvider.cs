@@ -9,7 +9,7 @@ using WordReaders.Settings;
 
 namespace ConsoleClient.Services;
 
-public class SettingsProvider(CommandLineOptions options) : ISettingsProvider
+public class SettingsProvider(Program options) : ISettingsProvider
 {
     public Result<SettingsStorage> GetSettingsStorage()
     {

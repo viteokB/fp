@@ -8,7 +8,7 @@ using McMaster.Extensions.CommandLineUtils;
 namespace ConsoleClient;
 
 [MaxFontSize]
-public class CommandLineOptions
+public class Program
 {
     [MinLength(1, ErrorMessage = "Path to read file should be not null or empty")]
     [Option(Description = "Path to file with words for reading", ShortName = "r", LongName = "pathToWordFile")]
@@ -52,7 +52,7 @@ public class CommandLineOptions
 
     public static int Main(string[] args)
     {
-        return CommandLineApplication.Execute<CommandLineOptions>(args);
+        return CommandLineApplication.Execute<Program>(args);
     }
 
     private void OnExecute()
